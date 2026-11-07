@@ -1,0 +1,32 @@
+{
+  "projectMetadata": {
+    "application": "4D Studio v4.2 Pro",
+    "standardsCompliance": [
+      "ISO 10303-242:2025 (STEP AP242 Kinematics & PMI)",
+      "ISO 14306 (JT ULP 100:1 Compression)",
+      "ISO 19650 / IFC4 (IfcWorkSchedule & IfcTask)",
+      "ISO/IEC 25422:2025 (3MF Multi-Material Additive)"
+    ],
+    "objective": "Unified 4D Spatiotemporal BIM Sequencing, SO(4) Hyperspace Geometry & Constitutive SMP Finite Element Analysis"
+  },
+  "so4HyperspaceKernel": {
+    "polytope": "Tesseract (8-Cell)",
+    "combinatorics": { "vertices": 16, "edges": 32, "faces": 24, "cells": 8, "eulerCharacteristic": 0 },
+    "cameraW": 3.0,
+    "orthogonalityTolerance": 7e-16
+  },
+  "ifc4WorkSchedule": [
+    { "taskId": "IfcTask_T1", "name": "Footing Excavation & Rebar", "date": "1999-08-01", "startPct": 0, "endPct": 20 },
+    { "taskId": "IfcTask_T2", "name": "Footing Formwork & Concrete Pour", "date": "1999-08-08", "startPct": 20, "endPct": 40 },
+    { "taskId": "IfcTask_T3", "name": "Superstructure Steel Columns", "date": "2000-02-01", "startPct": 40, "endPct": 65 },
+    { "taskId": "IfcTask_T4", "name": "Split Escalator Truss Routing (Part A & B)", "date": "2000-06-01", "startPct": 65, "endPct": 85 },
+    { "taskId": "IfcTask_T5", "name": "Curtainwall Facade & Crane Demobilization", "date": "2000-11-01", "startPct": 85, "endPct": 100 }
+  ],
+  "smpConstitutiveFEA": {
+    "material": "Biodegradable PLA-TPU Shape Memory Polymer",
+    "glassTransitionTempC": 42.0,
+    "glassyModulusGPa": 2.40,
+    "rubberyModulusGPa": 0.05,
+    "maxVonMisesStressMPa": 48.5
+  }
+}

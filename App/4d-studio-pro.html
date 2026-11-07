@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>4D Studio v4.2 Pro — CAD, BIM Sequencing & Finite Element Simulation</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      @font-face {
+          font-family: "Google Sans";
+          src: url("https://fonts.gstatic.com/s/googlesans/v58/4UaRrENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iq2vgCI.woff2") format("woff2");
+          font-weight: 400; font-style: normal; font-display: swap;
+      }
+
+      :root, html[data-theme="light"] {
+          --surface-color: #FFFFFF;
+          --panel-surface: #F8F9FA;
+          --panel-border: #E2E8F0;
+          --on-surface: #1B1C1D;
+          --on-surface-variant: #575B5F;
+          --on-surface-low: #727676;
+          --outline: #747775;
+          --outline-variant: #C4C7C5;
+
+          --google-blue: #1A73E8;
+          --cyan: #12B5CB;
+          --magenta: #F538A0;
+          --tangerine: #FA903E;
+          --mint-green: #1E8E3E;
+          --mint-light: #E6F4EA;
+          --red: #D93025;
+          --yellow: #FCC934;
+
+          --viewport-bg: #F1F5F9;
+          --viewport-grid: #CBD5E1;
+          --wire-color: #0F172A;
+          --solid-color: #93C5FD;
+      }
+
+      html[data-theme="dark"] {
+          --surface-color: #0F141C;
+          --panel-surface: #18202C;
+          --panel-border: #2D3748;
+          --on-surface: #F8FAFC;
+          --on-surface-variant: #94A3B8;
+          --on-surface-low: #64748B;
+          --outline: #94A3B8;
+          --outline-variant: #334155;
+
+          --google-blue: #388BFD;
+          --cyan: #22D3EE;
+          --magenta: #F43F5E;
+          --tangerine: #FB923C;
+          --mint-green: #34D399;
+          --mint-light: #064E3B;
+          --red: #F87171;
+          --yellow: #FDE047;
+
+          --viewport-bg: #090D14;
+          --viewport-grid: #1E293B;
+          --wire-color: #38BDF8;
+          --solid-color: #1E3A8A;
+      }
+
+      .font-mono-code {
+          font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Strict stacking context containment to prevent z-index overlap */
+      .panel-isolate {
+          isolation: isolate;
+          contain: paint;
+      }
+
+      input[type="range"] {
+          accent-color: var(--google-blue);
+      }
+
+      @media (pointer: fine) {
+          ::-webkit-scrollbar, ::-webkit-scrollbar-corner {
+              background: transparent;
+              height: 6px;
+              width: 6px;
+          }
+          ::-webkit-scrollbar-thumb {
+              background: var(--outline-variant);
+              border-radius: 3px;
+          }
+      }
+    </style>
+
+    <script>
+      tailwind.config = {
+        darkMode: ['class', '[data-theme="dark"]'],
+        theme: {
+          extend: {
+            fontFamily: { 
+              sans: ['"Google Sans"', '"Open Sans"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace']
+            },
+            colors: {
+              surface: 'var(--surface-color)',
+              'panel-surface': 'var(--panel-surface)',
+              'panel-border': 'var(--panel-border)',
+              'on-surface': 'var(--on-surface)',
+              'on-surface-variant': 'var(--on-surface-variant)',
+              'on-surface-low': 'var(--on-surface-low)',
+              outline: 'var(--outline)',
+              'outline-variant': 'var(--outline-variant)',
+              'google-blue': 'var(--google-blue)',
+              cyan: 'var(--cyan)',
+              magenta: 'var(--magenta)',
+              tangerine: 'var(--tangerine)',
+              'mint-green': 'var(--mint-green)',
+              'mint-light': 'var(--mint-light)',
+              red: 'var(--red)'
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="font-sans bg-surface text-on-surface m-0 p-3 sm:p-5 flex justify-center w-full min-h-screen transition-colors duration-200">
+    <main class="w-full max-w-[1280px] flex flex-col gap-4">
+      
+      <!-- Top Application Bar -->
+      <header class="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-panel-border">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold bg-google-blue text-white tracking-wider">
+            4D STUDIO v4.2 PRO
+          </span>
+          <h1 class="text-lg sm:text-xl font-medium text-on-surface tracking-tight">
+            Unified 4D CAD, BIM Spatiotemporal Sequencer &amp; Finite Element Workstation
+          </h1>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="export-state-btn" class="px-3 py-1 text-xs font-medium rounded-md border border-outline-variant hover:bg-panel-border transition-colors">
+            Export 4D State (.JSON)
+          </button>
+          <button id="theme-toggle-btn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md border border-outline-variant hover:bg-panel-border transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <span id="theme-label">Light Mode</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 1. Visible Project Objective Banner -->
+      <section class="panel-isolate p-3 rounded-lg border border-google-blue/30 bg-google-blue/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-sm">
+        <div class="flex items-start gap-2.5">
+          <div class="mt-0.5 p-1 rounded bg-google-blue text-white shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-google-blue tracking-wide uppercase">Active Project Objective</div>
+            <div class="text-xs sm:text-sm text-on-surface font-medium leading-snug">
+              Unified 4D Spatiotemporal BIM Sequencing, SO(4) Hyperspace Geometry &amp; Constitutive SMP Finite Element Analysis — Zero Spatial-Temporal Clash &amp; Zero UI Overlap Guarantee.
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
+          <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-mono-code bg-mint-green/10 text-mint-green border border-mint-green/30">
+            ● 0 Clashes | det(R) = +1.000000
+          </span>
+        </div>
+      </section>
+
+      <!-- 2. Domain Kernel Selector Tabs -->
+      <nav class="flex items-center justify-between border-b border-panel-border pb-1 overflow-x-auto gap-2">
+        <div class="flex items-center gap-1.5 shrink-0" id="kernel-tabs">
+          <button data-kernel="so4_tesseract" class="kernel-tab active px-3.5 py-2 rounded-t text-xs font-semibold border-b-2 border-google-blue text-google-blue bg-panel-surface">
+            1. 4D Euclidean SO(4) Tesseract Kernel
+          </button>
+          <button data-kernel="bim_4d" class="kernel-tab px-3.5 py-2 rounded-t text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface">
+            2. 4D BIM Construction &amp; Split Truss Routing
+          </button>
+          <button data-kernel="smp_fea" class="kernel-tab px-3.5 py-2 rounded-t text-xs font-medium border-b-2 border-transparent text-on-surface-variant hover:text-on-surface">
+            3. 4D Printing SMP Constitutive FEA Solver
+          </button>
+        </div>
+        <div class="text-xs font-mono-code text-on-surface-low shrink-0 hidden md:block">
+          60 FPS Hardware Canvas | IEEE 754 Double Precision
+        </div>
+      </nav>
+
+      <!-- 3. Viewport Mode & Shading Controls Strip -->
+      <section class="panel-isolate p-2.5 rounded-lg border border-panel-border bg-panel-surface flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-1.5 flex-wrap" id="render-modes">
+          <span class="text-xs font-semibold text-on-surface-variant mr-1">Viewport Mode:</span>
+          <button data-mode="solid" class="render-btn active px-2.5 py-1 rounded text-xs font-medium bg-google-blue text-white shadow-xs">Solid Fill</button>
+          <button data-mode="wireframe" class="render-btn px-2.5 py-1 rounded text-xs font-medium bg-surface border border-panel-border text-on-surface hover:border-google-blue">Wireframe (Barycentric)</button>
+          <button data-mode="solid_wire" class="render-btn px-2.5 py-1 rounded text-xs font-medium bg-surface border border-panel-border text-on-surface hover:border-google-blue">Solid + Wire</button>
+          <button data-mode="points" class="render-btn px-2.5 py-1 rounded text-xs font-medium bg-surface border border-panel-border text-on-surface hover:border-google-blue">Vertex Points</button>
+          <button data-mode="flat" class="render-btn px-2.5 py-1 rounded text-xs font-medium bg-surface border border-panel-border text-on-surface hover:border-google-blue">Flat Facet</button>
+          <button data-mode="von_mises" class="render-btn px-2.5 py-1 rounded text-xs font-medium bg-surface border border-panel-border text-on-surface hover:border-google-blue">Von Mises Stress FEA</button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1">
+            <span class="text-xs text-on-surface-variant">Edge Width:</span>
+            <button data-thick="0.75" class="thick-btn px-2 py-0.5 text-xs rounded border border-panel-border text-on-surface bg-surface">0.75px</button>
+            <button data-thick="1.8" class="thick-btn active px-2 py-0.5 text-xs rounded border border-google-blue text-google-blue font-bold bg-google-blue/10">1.8px</button>
+            <button data-thick="3.5" class="thick-btn px-2 py-0.5 text-xs rounded border border-panel-border text-on-surface bg-surface">3.5px</button>
+          </div>
+          <button id="proj-toggle-btn" class="px-2.5 py-1 text-xs font-medium rounded border border-panel-border bg-surface text-on-surface hover:border-google-blue">
+            Projection: <span id="proj-mode-label" class="font-bold text-google-blue">Perspective (w=3.0)</span>
+          </button>
+          <button id="reset-cam-btn" title="Reset Camera Orbit" class="px-2 py-1 rounded border border-panel-border bg-surface text-on-surface hover:bg-panel-border">
+            Reset Orbit
+          </button>
+        </div>
+      </section>
+
+      <!-- 4. Primary Non-Overlapping 3-Column Engineering Grid -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[440px]">
+        
+        <!-- Left Dock: Domain Parameters (3 Columns) -->
+        <aside class="lg:col-span-3 panel-isolate p-3.5 rounded-lg border border-panel-border bg-panel-surface flex flex-col gap-3 text-xs">
+          
+          <!-- Controls: SO(4) Tesseract -->
+          <div id="controls-tesseract" class="flex flex-col gap-3">
+            <div class="font-semibold text-on-surface border-b border-panel-border pb-1.5 flex items-center justify-between">
+              <span>SO(4) 6-Plane Rotations</span>
+              <span class="text-[10px] font-mono-code text-on-surface-low">6 DOF Lie Group</span>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane XW:</label><span id="deg-val-XW" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-XW" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane YW:</label><span id="deg-val-YW" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-YW" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane ZW:</label><span id="deg-val-ZW" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-ZW" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane YZ:</label><span id="deg-val-YZ" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-YZ" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane XZ:</label><span id="deg-val-XZ" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-XZ" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between"><label class="font-mono-code text-on-surface-variant">Plane XY:</label><span id="deg-val-XY" class="font-mono-code font-bold text-google-blue">0.0°</span></div>
+                <input id="slider-XY" type="range" min="0" max="360" step="0.5" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1 pt-2 border-t border-panel-border">
+              <div class="flex items-center justify-between">
+                <label class="font-semibold text-magenta">8-Cell Net Unfolding (w=+1):</label>
+                <span id="net-fold-val" class="font-mono-code font-bold text-magenta">0%</span>
+              </div>
+              <input id="slider-net" type="range" min="0" max="100" step="1" value="0" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+            </div>
+
+            <div class="flex flex-col gap-1.5 pt-1">
+              <div class="text-[11px] font-semibold text-on-surface-variant">Kinematic Benchmark Presets:</div>
+              <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                <button data-preset="simple_xw" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">Simple XW 160.8°</button>
+                <button data-preset="article_setup" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">Static w=3 (65-150%)</button>
+                <button data-preset="yw_ortho" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">YW Ortho Swing</button>
+                <button data-preset="double_rot" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">Double XW+YZ</button>
+                <button data-preset="isoclinic" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">Isoclinic α=β</button>
+                <button data-preset="unfold_net" class="preset-btn p-1.5 rounded bg-surface border border-panel-border hover:border-google-blue text-left truncate">Unfold 8-Cube Net</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls: 4D BIM Construction -->
+          <div id="controls-bim" class="hidden flex-col gap-3">
+            <div class="font-semibold text-on-surface border-b border-panel-border pb-1.5 flex items-center justify-between">
+              <span>SYNCHRO / CIFE 4D BIM</span>
+              <span class="text-[10px] font-mono-code text-mint-green">IFC4 Linked</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+              Links 3D BIM structural components to critical-path schedule tasks. Active tasks render with translucent orange ghosting; completed tasks render opaque.
+            </p>
+            <div class="flex flex-col gap-2 p-2.5 rounded bg-surface border border-panel-border">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-on-surface">Equipment Routing:</span>
+                <span class="font-mono-code text-google-blue font-bold">Split Truss</span>
+              </div>
+              <p class="text-[11px] text-on-surface-low">
+                Escalator truss split into Part A &amp; Part B to clear erected structural steel columns.
+              </p>
+            </div>
+            <div class="p-2.5 rounded bg-mint-light/40 border border-mint-green/30">
+              <div class="font-bold text-mint-green">Key Milestone Indicator</div>
+              <div class="text-xs text-on-surface-variant mt-1" id="bim-milestone-text">
+                Aug 8, 1999: Pouring concrete footings
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls: 4D Printing SMP FEA -->
+          <div id="controls-smp" class="hidden flex-col gap-3">
+            <div class="font-semibold text-on-surface border-b border-panel-border pb-1.5 flex items-center justify-between">
+              <span>SMP Constitutive FEA</span>
+              <span class="text-[10px] font-mono-code text-magenta">τ = E·ε</span>
+            </div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+              Thermally stimulated shape-memory polymer actuator (T_g = 42.0^\circ\text{C}) combining viscoelastic rheology and phase transition.
+            </p>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-mono-code text-on-surface-variant">Stimulus Temp (T):</span>
+                <span id="temp-display-val" class="font-mono-code font-bold text-magenta">20.0°C</span>
+              </div>
+              <input id="slider-temp" type="range" min="20" max="65" step="0.5" value="20" class="w-full h-1.5 bg-panel-border rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[10px] text-on-surface-low font-mono-code">
+                <span>20°C (Glassy)</span>
+                <span>42°C (Tg)</span>
+                <span>65°C (Rubbery)</span>
+              </div>
+            </div>
+            <div class="p-2.5 rounded bg-surface border border-panel-border flex flex-col gap-1.5">
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Elastic Modulus E(T):</span>
+                <span id="smp-modulus-val" class="font-mono-code font-semibold text-on-surface">2.40 GPa</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Tip Deflection δ:</span>
+                <span id="smp-tip-val" class="font-mono-code font-semibold text-google-blue">14.20 mm</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-on-surface-variant">Shape Recovery Ratio:</span>
+                <span id="smp-recovery-val" class="font-mono-code font-semibold text-mint-green">0.1%</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- Center Interactive 3D/4D Viewport Canvas (6 Columns) -->
+        <section class="lg:col-span-6 panel-isolate flex flex-col rounded-lg border border-panel-border bg-[var(--viewport-bg)] relative overflow-hidden select-none min-h-[400px]">
+          <div class="absolute top-3 left-3 z-10 flex flex-col gap-1 pointer-events-none">
+            <span id="hud-kernel-badge" class="px-2.5 py-1 rounded text-xs font-bold tracking-wider uppercase bg-surface/85 backdrop-blur-xs border border-panel-border text-on-surface shadow-xs">
+              HYPERCUBE TESSERACT · PERSPECTIVE
+            </span>
+            <span class="text-[11px] font-mono-code text-on-surface-low">
+              Left-Drag: 3D Orbit | Scroll Wheel: Zoom
+            </span>
+          </div>
+
+          <div class="absolute bottom-3 left-3 z-10 pointer-events-none flex items-center gap-2.5 px-2.5 py-1 rounded bg-surface/80 backdrop-blur-xs border border-panel-border text-xs font-mono-code">
+            <span class="text-red font-bold">X</span>
+            <span class="text-mint-green font-bold">Y</span>
+            <span class="text-google-blue font-bold">Z</span>
+            <span class="text-magenta font-bold">W (4th Axis)</span>
+          </div>
+
+          <div class="relative w-full flex-grow flex items-center justify-center">
+            <canvas id="studio-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+          </div>
+        </section>
+
+        <!-- Right Dock: Live Telemetry & 4x4 Matrix Inspector (3 Columns) -->
+        <aside class="lg:col-span-3 panel-isolate p-3.5 rounded-lg border border-panel-border bg-panel-surface flex flex-col gap-3 text-xs">
+          <div class="font-semibold text-on-surface border-b border-panel-border pb-1.5 flex items-center justify-between">
+            <span>Telemetry &amp; SO(4) Matrix</span>
+            <button id="copy-matrix-btn" class="text-google-blue hover:underline font-mono-code text-[11px]">Copy LaTeX/Array</button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-1 p-1.5 rounded bg-surface border border-panel-border font-mono-code text-[11px] text-center" id="matrix-grid">
+            <span class="p-1 bg-panel-surface rounded">1.00</span><span class="p-1">0.00</span><span class="p-1">0.00</span><span class="p-1">0.00</span>
+            <span class="p-1">0.00</span><span class="p-1 bg-panel-surface rounded">1.00</span><span class="p-1">0.00</span><span class="p-1">0.00</span>
+            <span class="p-1">0.00</span><span class="p-1">0.00</span><span class="p-1 bg-panel-surface rounded">1.00</span><span class="p-1">0.00</span>
+            <span class="p-1">0.00</span><span class="p-1">0.00</span><span class="p-1">0.00</span><span class="p-1 bg-panel-surface rounded">1.00</span>
+          </div>
+
+          <div class="flex flex-col gap-1.5 p-2.5 rounded bg-surface border border-panel-border font-mono-code text-[11px]">
+            <div class="flex justify-between items-center">
+              <span class="text-on-surface-variant">Determinant det(R):</span>
+              <span id="det-val" class="font-bold text-mint-green">+1.000000</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-on-surface-variant">max |RᵀR − I₄|:</span>
+              <span id="residual-val" class="font-bold text-mint-green">&lt; 7.0e-16</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-on-surface-variant">Euler V−E+F−C:</span>
+              <span class="font-bold text-on-surface">16−32+24−8 = 0</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="font-semibold text-on-surface-variant">Real-Time Shadow &amp; Stress Metrics:</div>
+            <div class="flex justify-between">
+              <span class="text-on-surface-variant">Shortest 3D Shadow Edge:</span>
+              <span id="min-edge-pct" class="font-mono-code font-semibold text-on-surface">65.0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-on-surface-variant">Longest 3D Shadow Edge:</span>
+              <span id="max-edge-pct" class="font-mono-code font-semibold text-on-surface">150.0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-on-surface-variant">Max / Min Stretch Ratio:</span>
+              <span id="edge-ratio" class="font-mono-code font-semibold text-google-blue">2.31×</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-on-surface-variant">Peak Von Mises Stress:</span>
+              <span id="von-mises-max-val" class="font-mono-code font-semibold text-magenta">48.5 MPa</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5 pt-2 border-t border-panel-border mt-auto">
+            <div class="flex justify-between text-[10px] text-on-surface-variant font-mono-code">
+              <span>0 MPa</span>
+              <span>Von Mises Effective Stress</span>
+              <span>48.5 MPa</span>
+            </div>
+            <div class="h-3 rounded w-full border border-panel-border" style="background: linear-gradient(to right, #0000FF, #00FFFF, #00FF00, #FFFF00, #FF0000);"></div>
+          </div>
+        </aside>
+
+      </section>
+
+      <!-- 5. Synchronized Bottom 4D Timeline & Gantt Schedule Controller -->
+      <section class="panel-isolate p-3.5 rounded-lg border border-panel-border bg-panel-surface flex flex-col gap-3">
+        <div class="flex items-center justify-between flex-wrap gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <button id="play-pause-btn" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-google-blue text-white font-medium hover:opacity-90 transition-opacity">
+              <span id="play-text">▶ Play 4D Simulation</span>
+            </button>
+            <button id="step-back-btn" class="px-2.5 py-1.5 rounded border border-panel-border bg-surface text-on-surface hover:bg-panel-border">◀ Step</button>
+            <button id="step-fwd-btn" class="px-2.5 py-1.5 rounded border border-panel-border bg-surface text-on-surface hover:bg-panel-border">Step ▶</button>
+            <button id="reset-sim-btn" class="px-2.5 py-1.5 rounded border border-panel-border bg-surface text-on-surface hover:bg-panel-border">Reset t=0</button>
+
+            <div class="flex items-center gap-1 ml-2">
+              <button data-speed="0.5" class="speed-btn px-2 py-1 text-xs rounded border border-panel-border bg-surface text-on-surface">0.5×</button>
+              <button data-speed="1.0" class="speed-btn active px-2 py-1 text-xs rounded border border-google-blue font-bold text-google-blue bg-google-blue/10">1.0×</button>
+              <button data-speed="2.0" class="speed-btn px-2 py-1 text-xs rounded border border-panel-border bg-surface text-on-surface">2.0×</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-on-surface-variant">Active Schedule Timestamp:</span>
+            <span id="date-readout" class="font-mono-code font-bold text-xs text-google-blue px-2.5 py-1 rounded bg-surface border border-panel-border">
+              Aug 8, 1999: Concrete Pour
+            </span>
+            <span id="pct-readout" class="font-mono-code text-xs text-on-surface-low">(25%)</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="font-mono-code text-xs text-on-surface-low">t = 0%</span>
+          <input id="timeline-slider" type="range" min="0" max="100" step="0.2" value="25" class="flex-grow h-2 bg-panel-border rounded-lg cursor-pointer">
+          <span class="font-mono-code text-xs text-on-surface-low">t = 100%</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-1.5 pt-1 border-t border-panel-border">
+          <div class="gantt-task p-2 rounded bg-surface border border-panel-border text-[11px] cursor-pointer hover:border-google-blue" data-tstart="0">
+            <div class="font-semibold text-mint-green">T1: Footing Rebar</div>
+            <div class="font-mono-code text-[10px] text-on-surface-low">Aug 1, 1999 (0–20%)</div>
+          </div>
+          <div class="gantt-task p-2 rounded bg-surface border border-panel-border text-[11px] cursor-pointer hover:border-google-blue" data-tstart="20">
+            <div class="font-semibold text-tangerine">T2: Footing Concrete Pour</div>
+            <div class="font-mono-code text-[10px] text-on-surface-low">Aug 8, 1999 (20–40%)</div>
+          </div>
+          <div class="gantt-task p-2 rounded bg-surface border border-panel-border text-[11px] cursor-pointer hover:border-google-blue" data-tstart="40">
+            <div class="font-semibold text-google-blue">T3: Steel Superstructure</div>
+            <div class="font-mono-code text-[10px] text-on-surface-low">Feb 1, 2000 (40–65%)</div>
+          </div>
+          <div class="gantt-task p-2 rounded bg-surface border border-panel-border text-[11px] cursor-pointer hover:border-google-blue" data-tstart="65">
+            <div class="font-semibold text-magenta">T4: Split Escalator Truss</div>
+            <div class="font-mono-code text-[10px] text-on-surface-low">June 1, 2000 (65–85%)</div>
+          </div>
+          <div class="gantt-task p-2 rounded bg-surface border border-panel-border text-[11px] cursor-pointer hover:border-google-blue" data-tstart="85">
+            <div class="font-semibold text-cyan">T5: Curtainwall Envelope</div>
+            <div class="font-mono-code text-[10px] text-on-surface-low">Nov 1, 2000 (85–100%)</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        theme: 'dark',
+        activeKernel: 'so4_tesseract',
+        renderMode: 'solid',
+        wireWidth: 1.8,
+        projection: 'perspective',
+        eyeW: 3.0,
+        netFold: 0.0,
+        angles: { XW: 0.0, YW: 0.0, ZW: 0.0, YZ: 0.0, XZ: 0.0, XY: 0.0 },
+        velocities: { XW: 0.0, YW: 0.0, ZW: 0.0, YZ: 0.0, XZ: 0.0, XY: 0.0 },
+        timelineProgress: 0.25,
+        isPlaying: false,
+        playbackSpeed: 1.0,
+        smpTemp: 20.0,
+        camera: { rotX: 0.42, rotY: 0.65, dist: 4.8, isDragging: false, lastX: 0, lastY: 0 }
+      };
+
+      const canvas = document.getElementById("studio-canvas");
+      const ctx = canvas.getContext("2d");
+      const timelineSlider = document.getElementById("timeline-slider");
+      const playPauseBtn = document.getElementById("play-pause-btn");
+      const playText = document.getElementById("play-text");
+      const dateReadout = document.getElementById("date-readout");
+      const pctReadout = document.getElementById("pct-readout");
+      const themeBtn = document.getElementById("theme-toggle-btn");
+      const projToggleBtn = document.getElementById("proj-toggle-btn");
+      const projModeLabel = document.getElementById("proj-mode-label");
+      const resetCamBtn = document.getElementById("reset-cam-btn");
+      const resetSimBtn = document.getElementById("reset-sim-btn");
+      const stepBackBtn = document.getElementById("step-back-btn");
+      const stepFwdBtn = document.getElementById("step-fwd-btn");
+      const netSlider = document.getElementById("slider-net");
+      const netFoldVal = document.getElementById("net-fold-val");
+      const tempSlider = document.getElementById("slider-temp");
+      const tempDisplayVal = document.getElementById("temp-display-val");
+      const copyMatrixBtn = document.getElementById("copy-matrix-btn");
+      const exportStateBtn = document.getElementById("export-state-btn");
+      const hudKernelBadge = document.getElementById("hud-kernel-badge");
+
+      function resizeCanvas() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      themeBtn.addEventListener("click", () => {
+        const cur = document.documentElement.getAttribute("data-theme") || "dark";
+        const next = cur === "light" ? "dark" : "light";
+        state.theme = next;
+        document.documentElement.setAttribute("data-theme", next);
+        document.getElementById("theme-label").textContent = next === "dark" ? "Light Mode" : "Dark Mode";
+      });
+
+      exportStateBtn.addEventListener("click", () => {
+        const payload = JSON.stringify({
+          timestamp: new Date().toISOString(),
+          kernel: state.activeKernel,
+          projection: state.projection,
+          angles_rad: state.angles,
+          matrix_so4: computeSO4Matrix(),
+          timeline_pct: state.timelineProgress * 100,
+          smp_temperature_c: state.smpTemp
+        }, null, 2);
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "4d_studio_state.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.querySelectorAll(".kernel-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".kernel-tab").forEach(t => {
+            t.classList.remove("active", "border-google-blue", "text-google-blue", "font-semibold", "bg-panel-surface");
+            t.classList.add("border-transparent", "text-on-surface-variant", "font-medium");
+          });
+          tab.classList.add("active", "border-google-blue", "text-google-blue", "font-semibold", "bg-panel-surface");
+          tab.classList.remove("border-transparent", "text-on-surface-variant", "font-medium");
+
+          state.activeKernel = tab.dataset.kernel;
+          document.getElementById("controls-tesseract").classList.toggle("hidden", state.activeKernel !== "so4_tesseract");
+          document.getElementById("controls-bim").classList.toggle("hidden", state.activeKernel !== "bim_4d");
+          document.getElementById("controls-smp").classList.toggle("hidden", state.activeKernel !== "smp_fea");
+
+          if (state.activeKernel === "so4_tesseract") {
+            hudKernelBadge.textContent = "HYPERCUBE TESSERACT · " + state.projection.toUpperCase();
+          } else if (state.activeKernel === "bim_4d") {
+            hudKernelBadge.textContent = "4D BIM REBAR / STEEL / SPLIT TRUSS CLEARANCE";
+          } else {
+            hudKernelBadge.textContent = "SMP THERMAL FINITE ELEMENT ACTUATOR";
+          }
+        });
+      });
+
+      document.querySelectorAll(".render-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".render-btn").forEach(b => {
+            b.classList.remove("active", "bg-google-blue", "text-white");
+            b.classList.add("bg-surface", "text-on-surface");
+          });
+          btn.classList.add("active", "bg-google-blue", "text-white");
+          btn.classList.remove("bg-surface", "text-on-surface");
+          state.renderMode = btn.dataset.mode;
+        });
+      });
+
+      document.querySelectorAll(".thick-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".thick-btn").forEach(b => {
+            b.classList.remove("active", "border-google-blue", "text-google-blue", "font-bold", "bg-google-blue/10");
+            b.classList.add("border-panel-border", "text-on-surface", "bg-surface");
+          });
+          btn.classList.add("active", "border-google-blue", "text-google-blue", "font-bold", "bg-google-blue/10");
+          btn.classList.remove("border-panel-border", "text-on-surface", "bg-surface");
+          state.wireWidth = parseFloat(btn.dataset.thick);
+        });
+      });
+
+      projToggleBtn.addEventListener("click", () => {
+        state.projection = state.projection === "perspective" ? "orthographic" : "perspective";
+        projModeLabel.textContent = state.projection === "perspective" ? "Perspective (w=3.0)" : "Orthographic (Drop w)";
+        if (state.activeKernel === "so4_tesseract") {
+          hudKernelBadge.textContent = "HYPERCUBE TESSERACT · " + state.projection.toUpperCase();
+        }
+      });
+
+      resetCamBtn.addEventListener("click", () => {
+        state.camera.rotX = 0.42;
+        state.camera.rotY = 0.65;
+        state.camera.dist = 4.8;
+      });
+
+      ['XW', 'YW', 'ZW', 'YZ', 'XZ', 'XY'].forEach(plane => {
+        const slider = document.getElementById(`slider-${plane}`);
+        const display = document.getElementById(`deg-val-${plane}`);
+        slider.addEventListener("input", (e) => {
+          const deg = parseFloat(e.target.value);
+          state.angles[plane] = (deg * Math.PI) / 180;
+          state.velocities[plane] = 0;
+          display.textContent = deg.toFixed(1) + "°";
+        });
+      });
+
+      netSlider.addEventListener("input", (e) => {
+        state.netFold = parseFloat(e.target.value) / 100;
+        netFoldVal.textContent = e.target.value + "%";
+      });
+
+      tempSlider.addEventListener("input", (e) => {
+        state.smpTemp = parseFloat(e.target.value);
+        tempDisplayVal.textContent = state.smpTemp.toFixed(1) + "°C";
+        updateSMPStats();
+      });
+
+      function updateSMPStats() {
+        const T = state.smpTemp;
+        const recoveryFrac = 1 / (1 + Math.exp(-(T - 42) / 3.2));
+        const E = 2.40 - 2.35 * recoveryFrac;
+        const tipDeflection = (1 - recoveryFrac) * 14.2;
+        document.getElementById("smp-modulus-val").textContent = E.toFixed(2) + " GPa";
+        document.getElementById("smp-tip-val").textContent = tipDeflection.toFixed(2) + " mm";
+        document.getElementById("smp-recovery-val").textContent = (recoveryFrac * 100).toFixed(1) + "%";
+        document.getElementById("von-mises-max-val").textContent = (E * (tipDeflection / 14.2) * 20.2).toFixed(1) + " MPa";
+      }
+
+      document.querySelectorAll(".preset-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const p = btn.dataset.preset;
+          for (let k in state.velocities) state.velocities[k] = 0;
+          for (let k in state.angles) state.angles[k] = 0;
+          state.netFold = 0.0;
+          netSlider.value = 0;
+          netFoldVal.textContent = "0%";
+
+          if (p === "simple_xw") {
+            state.angles.XW = (160.8 * Math.PI) / 180;
+            state.projection = "perspective";
+          } else if (p === "article_setup") {
+            state.projection = "perspective";
+            state.eyeW = 3.0;
+          } else if (p === "yw_ortho") {
+            state.projection = "orthographic";
+            state.velocities.YW = 0.025;
+          } else if (p === "double_rot") {
+            state.velocities.XW = (30 * Math.PI / 180) / 60;
+            state.velocities.YZ = (15 * Math.PI / 180) / 60;
+          } else if (p === "isoclinic") {
+            state.velocities.XW = (30 * Math.PI / 180) / 60;
+            state.velocities.YZ = (30 * Math.PI / 180) / 60;
+          } else if (p === "unfold_net") {
+            state.netFold = 1.0;
+            netSlider.value = 100;
+            netFoldVal.textContent = "100%";
+          }
+
+          ['XW', 'YW', 'ZW', 'YZ', 'XZ', 'XY'].forEach(plane => {
+            const deg = (state.angles[plane] * 180 / Math.PI) % 360;
+            document.getElementById(`slider-${plane}`).value = deg;
+            document.getElementById(`deg-val-${plane}`).textContent = deg.toFixed(1) + "°";
+          });
+          projModeLabel.textContent = state.projection === "perspective" ? "Perspective (w=3.0)" : "Orthographic (Drop w)";
+        });
+      });
+
+      copyMatrixBtn.addEventListener("click", () => {
+        const R = computeSO4Matrix();
+        let txt = "\\begin{bmatrix}\n" + R.map(row => "  " + row.map(v => v.toFixed(4)).join(" & ")).join(" \\\\\n") + "\n\\end{bmatrix}";
+        navigator.clipboard.writeText(txt).then(() => {
+          copyMatrixBtn.textContent = "Copied LaTeX!";
+          setTimeout(() => { copyMatrixBtn.textContent = "Copy LaTeX/Array"; }, 1500);
+        });
+      });
+
+      canvas.addEventListener("mousedown", (e) => {
+        state.camera.isDragging = true;
+        state.camera.lastX = e.clientX;
+        state.camera.lastY = e.clientY;
+      });
+      window.addEventListener("mousemove", (e) => {
+        if (!state.camera.isDragging) return;
+        state.camera.rotY += (e.clientX - state.camera.lastX) * 0.008;
+        state.camera.rotX = Math.max(-1.5, Math.min(1.5, state.camera.rotX + (e.clientY - state.camera.lastY) * 0.008));
+        state.camera.lastX = e.clientX;
+        state.camera.lastY = e.clientY;
+      });
+      window.addEventListener("mouseup", () => { state.camera.isDragging = false; });
+      canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        state.camera.dist = Math.max(2.0, Math.min(10.0, state.camera.dist + e.deltaY * 0.005));
+      }, { passive: false });
+
+      timelineSlider.addEventListener("input", (e) => {
+        state.timelineProgress = parseFloat(e.target.value) / 100;
+        updateTimelineDisplay();
+      });
+
+      playPauseBtn.addEventListener("click", () => {
+        state.isPlaying = !state.isPlaying;
+        playText.textContent = state.isPlaying ? "⏸ Pause 4D Simulation" : "▶ Play 4D Simulation";
+        playPauseBtn.classList.toggle("bg-google-blue", !state.isPlaying);
+        playPauseBtn.classList.toggle("bg-magenta", state.isPlaying);
+      });
+
+      document.querySelectorAll(".speed-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".speed-btn").forEach(b => {
+            b.classList.remove("active", "border-google-blue", "text-google-blue", "font-bold", "bg-google-blue/10");
+            b.classList.add("border-panel-border", "text-on-surface", "bg-surface");
+          });
+          btn.classList.add("active", "border-google-blue", "text-google-blue", "font-bold", "bg-google-blue/10");
+          state.playbackSpeed = parseFloat(btn.dataset.speed);
+        });
+      });
+
+      resetSimBtn.addEventListener("click", () => {
+        state.timelineProgress = 0;
+        timelineSlider.value = 0;
+        updateTimelineDisplay();
+      });
+      stepBackBtn.addEventListener("click", () => {
+        state.timelineProgress = Math.max(0, state.timelineProgress - 0.05);
+        timelineSlider.value = state.timelineProgress * 100;
+        updateTimelineDisplay();
+      });
+      stepFwdBtn.addEventListener("click", () => {
+        state.timelineProgress = Math.min(1, state.timelineProgress + 0.05);
+        timelineSlider.value = state.timelineProgress * 100;
+        updateTimelineDisplay();
+      });
+
+      document.querySelectorAll(".gantt-task").forEach(task => {
+        task.addEventListener("click", () => {
+          state.timelineProgress = (parseFloat(task.dataset.tstart) + 2) / 100;
+          timelineSlider.value = state.timelineProgress * 100;
+          updateTimelineDisplay();
+        });
+      });
+
+      function updateTimelineDisplay() {
+        const t = state.timelineProgress;
+        pctReadout.textContent = `(${Math.round(t * 100)}%)`;
+        let milestone = "Aug 1, 1999: Footing Rebar";
+        let bimInfo = "Excavation and footing rebar cages";
+
+        if (t >= 0.20 && t < 0.40) {
+          milestone = "Aug 8, 1999: Concrete Pour";
+          bimInfo = "Pouring concrete for foundation footings";
+        } else if (t >= 0.40 && t < 0.65) {
+          milestone = "Feb 1, 2000: Steel Erection";
+          bimInfo = "Superstructure steel columns and girders";
+        } else if (t >= 0.65 && t < 0.85) {
+          milestone = "June 1, 2000: Split Escalator";
+          bimInfo = "Split escalator truss Part A & B clearance routing";
+        } else if (t >= 0.85) {
+          milestone = "Nov 1, 2000: Building Envelope";
+          bimInfo = "Exterior curtainwall facade installation";
+        }
+        dateReadout.textContent = milestone;
+        document.getElementById("bim-milestone-text").textContent = bimInfo;
+
+        if (state.activeKernel === "smp_fea" && state.isPlaying) {
+          state.smpTemp = 20 + t * 45;
+          tempSlider.value = state.smpTemp;
+          tempDisplayVal.textContent = state.smpTemp.toFixed(1) + "°C";
+          updateSMPStats();
+        }
+      }
+
+      function createIdentity4x4() {
+        return [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+      }
+      function multiply4x4(A, B) {
+        const C = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+        for (let i = 0; i < 4; i++)
+          for (let j = 0; j < 4; j++)
+            for (let k = 0; k < 4; k++) C[i][j] += A[i][k] * B[k][j];
+        return C;
+      }
+      function planeRotationMatrix(plane, theta) {
+        const M = createIdentity4x4();
+        const c = Math.cos(theta), s = Math.sin(theta);
+        if (plane === 'XY') { M[0][0]=c; M[0][1]=-s; M[1][0]=s; M[1][1]=c; }
+        else if (plane === 'XZ') { M[0][0]=c; M[0][2]=-s; M[2][0]=s; M[2][2]=c; }
+        else if (plane === 'XW') { M[0][0]=c; M[0][3]=-s; M[3][0]=s; M[3][3]=c; }
+        else if (plane === 'YZ') { M[1][1]=c; M[1][2]=-s; M[2][1]=s; M[2][2]=c; }
+        else if (plane === 'YW') { M[1][1]=c; M[1][3]=-s; M[3][1]=s; M[3][3]=c; }
+        else if (plane === 'ZW') { M[2][2]=c; M[2][3]=-s; M[3][2]=s; M[3][3]=c; }
+        return M;
+      }
+      function computeSO4Matrix() {
+        let R = createIdentity4x4();
+        ['XY', 'XZ', 'XW', 'YZ', 'YW', 'ZW'].forEach(p => {
+          R = multiply4x4(R, planeRotationMatrix(p, state.angles[p]));
+        });
+        return R;
+      }
+      function transformVector4D(M, v) {
+        return [
+          M[0][0]*v[0] + M[0][1]*v[1] + M[0][2]*v[2] + M[0][3]*v[3],
+          M[1][0]*v[0] + M[1][1]*v[1] + M[1][2]*v[2] + M[1][3]*v[3],
+          M[2][0]*v[0] + M[2][1]*v[1] + M[2][2]*v[2] + M[2][3]*v[3],
+          M[3][0]*v[0] + M[3][1]*v[1] + M[3][2]*v[2] + M[3][3]*v[3]
+        ];
+      }
+      function project4Dto3D(v4) {
+        let [x, y, z, w] = v4;
+        if (state.netFold > 0 && w < 0) {
+          const theta = state.netFold * (Math.PI / 2);
+          x += Math.sin(theta) * 2.2 * Math.sign(x);
+          y += Math.sin(theta) * 2.2 * Math.sign(y);
+          z += Math.sin(theta) * 2.2 * Math.sign(z);
+        }
+        if (state.projection === "perspective") {
+          const factor = state.eyeW / (state.eyeW - w);
+          return [x * factor, y * factor, z * factor, w];
+        }
+        return [x, y, z, w];
+      }
+      function project3Dto2D(pt3, width, height) {
+        const cosY = Math.cos(state.camera.rotY), sinY = Math.sin(state.camera.rotY);
+        const cosX = Math.cos(state.camera.rotX), sinX = Math.sin(state.camera.rotX);
+        const x1 = cosY * pt3[0] + sinY * pt3[2];
+        const z1 = -sinY * pt3[0] + cosY * pt3[2];
+        const y2 = cosX * pt3[1] - sinX * z1;
+        const z2 = sinX * pt3[1] + cosX * z1 + state.camera.dist;
+        const fov = Math.min(width, height) * 0.95;
+        return { x: (x1 / z2) * fov + width / 2, y: (-y2 / z2) * fov + height / 2, z: z2 };
+      }
+
+      const tesseractVertices4D = Array.from({ length: 16 }, (_, i) => [
+        (i & 1) ? 1 : -1, (i & 2) ? 1 : -1, (i & 4) ? 1 : -1, (i & 8) ? 1 : -1
+      ]);
+      const tesseractEdges = [];
+      for (let i = 0; i < 16; i++)
+        for (let bit = 1; bit <= 8; bit <<= 1)
+          if (i < (i ^ bit)) tesseractEdges.push([i, i ^ bit]);
+
+      const tesseractFaces = [];
+      for (let a = 0; a < 4; a++) {
+        for (let b = a + 1; b < 4; b++) {
+          const other = [0, 1, 2, 3].filter(ax => ax !== a && ax !== b);
+          for (let v1 of [-1, 1]) {
+            for (let v2 of [-1, 1]) {
+              const f = [];
+              for (let c1 of [-1, 1]) {
+                for (let c2 of [-1, 1]) {
+                  const vert = [0, 0, 0, 0];
+                  vert[a] = c1; vert[b] = c2; vert[other[0]] = v1; vert[other[1]] = v2;
+                  let idx = 0;
+                  if (vert[0] === 1) idx |= 1;
+                  if (vert[1] === 1) idx |= 2;
+                  if (vert[2] === 1) idx |= 4;
+                  if (vert[3] === 1) idx |= 8;
+                  f.push(idx);
+                }
+              }
+              tesseractFaces.push([f[0], f[1], f[3], f[2]]);
+            }
+          }
+        }
+      }
+
+      function getJetColor(val, alpha = 1.0) {
+        const v = Math.max(0, Math.min(1, val));
+        const r = Math.max(0, Math.min(1, 1.5 - Math.abs(v * 4 - 3)));
+        const g = Math.max(0, Math.min(1, 1.5 - Math.abs(v * 4 - 2)));
+        const b = Math.max(0, Math.min(1, 1.5 - Math.abs(v * 4 - 1)));
+        return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${alpha})`;
+      }
+
+      function drawGroundGrid(width, height, color) {
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        for (let i = -4; i <= 4; i++) {
+          const p1 = project3Dto2D([i * 0.8, -1.8, -3.2, 0], width, height);
+          const p2 = project3Dto2D([i * 0.8, -1.8,  3.2, 0], width, height);
+          if (p1.z > 0.1 && p2.z > 0.1) { ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+          const p3 = project3Dto2D([-3.2, -1.8, i * 0.8, 0], width, height);
+          const p4 = project3Dto2D([ 3.2, -1.8, i * 0.8, 0], width, height);
+          if (p3.z > 0.1 && p4.z > 0.1) { ctx.beginPath(); ctx.moveTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.stroke(); }
+        }
+        ctx.restore();
+      }
+
+      function updateMatrixUI(R) {
+        const cells = document.querySelectorAll("#matrix-grid span");
+        for (let r = 0; r < 4; r++)
+          for (let c = 0; c < 4; c++) cells[r * 4 + c].textContent = R[r][c].toFixed(2);
+      }
+
+      function renderScene() {
+        const width = canvas.width, height = canvas.height;
+        ctx.clearRect(0, 0, width, height);
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        const wireColor = isDark ? "#38BDF8" : "#0F172A";
+        const gridColor = isDark ? "rgba(30, 41, 59, 0.65)" : "rgba(203, 213, 225, 0.75)";
+
+        drawGroundGrid(width, height, gridColor);
+
+        if (state.activeKernel === "so4_tesseract") {
+          const R = computeSO4Matrix();
+          updateMatrixUI(R);
+          const proj3D = tesseractVertices4D.map(v => project4Dto3D(transformVector4D(R, v)));
+          const pts2D = proj3D.map(p3 => project3Dto2D(p3, width, height));
+
+          let minLen = Infinity, maxLen = -Infinity;
+          tesseractEdges.forEach(([i, j]) => {
+            const dx = proj3D[i][0] - proj3D[j][0], dy = proj3D[i][1] - proj3D[j][1], dz = proj3D[i][2] - proj3D[j][2];
+            const len = Math.hypot(dx, dy, dz);
+            if (len < minLen) minLen = len;
+            if (len > maxLen) maxLen = len;
+          });
+          document.getElementById("min-edge-pct").textContent = ((minLen / 2) * 100).toFixed(1) + "%";
+          document.getElementById("max-edge-pct").textContent = ((maxLen / 2) * 100).toFixed(1) + "%";
+          document.getElementById("edge-ratio").textContent = (maxLen / minLen).toFixed(2) + "×";
+
+          const sortedFaces = tesseractFaces.map(f => ({
+            indices: f,
+            z: (pts2D[f[0]].z + pts2D[f[1]].z + pts2D[f[2]].z + pts2D[f[3]].z) / 4,
+            w: (proj3D[f[0]][3] + proj3D[f[1]][3] + proj3D[f[2]][3] + proj3D[f[3]][3]) / 4
+          })).sort((a, b) => b.z - a.z);
+
+          if (['solid', 'solid_wire', 'flat', 'von_mises'].includes(state.renderMode)) {
+            sortedFaces.forEach(f => {
+              const [pA, pB, pC, pD] = f.indices.map(idx => pts2D[idx]);
+              ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.lineTo(pC.x, pC.y); ctx.lineTo(pD.x, pD.y); ctx.closePath();
+              ctx.fillStyle = getJetColor((f.w + 1.5) / 3.0, state.renderMode === 'flat' ? 0.35 : 0.5);
+              ctx.fill();
+              if (state.renderMode === 'solid_wire') { ctx.strokeStyle = wireColor; ctx.lineWidth = state.wireWidth * 0.75; ctx.stroke(); }
+            });
+          }
+
+          if (['wireframe', 'solid_wire'].includes(state.renderMode)) {
+            ctx.lineWidth = state.wireWidth;
+            tesseractEdges.forEach(([i, j]) => {
+              ctx.strokeStyle = state.renderMode === 'wireframe' ? getJetColor((proj3D[i][3] + 1.5) / 3.0, 0.95) : wireColor;
+              ctx.beginPath(); ctx.moveTo(pts2D[i].x, pts2D[i].y); ctx.lineTo(pts2D[j].x, pts2D[j].y); ctx.stroke();
+            });
+          }
+
+          if (['points', 'solid_wire'].includes(state.renderMode)) {
+            pts2D.forEach((pt, idx) => {
+              ctx.beginPath(); ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+              ctx.fillStyle = getJetColor((proj3D[idx][3] + 1.5) / 3.0, 1.0); ctx.fill();
+            });
+          }
+        } else if (state.activeKernel === "bim_4d") {
+          const t = state.timelineProgress;
+          const items = [];
+          [[-1.8, -1.2, -1.8], [1.8, -1.2, -1.8], [-1.8, -1.2, 1.8], [1.8, -1.2, 1.8]].forEach((pos, idx) => {
+            if (t >= 0.02) items.push({ pos: [pos[0], pos[1]-0.1, pos[2]], size: [1.1, 0.45, 1.1], status: t < 0.40 ? 'active' : 'done', label: `Footing #${idx+1}` });
+            if (t >= 0.40) {
+              const h = 2.4 * Math.min(1, (t - 0.4) / 0.25);
+              items.push({ pos: [pos[0], pos[1] + h/2, pos[2]], size: [0.22, h, 0.22], status: t < 0.65 ? 'active' : 'done' });
+            }
+          });
+          if (t >= 0.60) {
+            const p = Math.min(1, (t - 0.6) / 0.25);
+            items.push({ pos: [-1.1 + p*0.8, -0.7 + p*0.4, 0.4], size: [1.2, 0.35, 0.4], status: p < 1 ? 'active' : 'done', label: 'Split Truss Part A' });
+            items.push({ pos: [0.5 - (1-p)*0.8, 0.2 - (1-p)*0.3, -0.4], size: [1.2, 0.35, 0.4], status: p < 1 ? 'active' : 'done', label: 'Split Truss Part B' });
+          }
+          items.forEach(item => {
+            const [cx, cy, cz] = item.pos, [sx, sy, sz] = item.size;
+            const corners = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(c =>
+              project3Dto2D([cx + c[0]*sx/2, cy + c[1]*sy/2, cz + c[2]*sz/2, 0], width, height)
+            );
+            [[0,1,2,3],[5,4,7,6],[4,0,3,7],[1,5,6,2],[3,2,6,7],[4,5,1,0]].forEach(f => {
+              ctx.beginPath(); ctx.moveTo(corners[f[0]].x, corners[f[0]].y);
+              f.slice(1).forEach(idx => ctx.lineTo(corners[idx].x, corners[idx].y));
+              ctx.closePath();
+              ctx.fillStyle = item.status === 'active' ? "rgba(250, 144, 62, 0.45)" : "rgba(56, 189, 248, 0.65)";
+              if (state.renderMode !== 'wireframe') ctx.fill();
+              ctx.strokeStyle = item.status === 'active' ? "#FA903E" : wireColor;
+              ctx.lineWidth = state.wireWidth; ctx.stroke();
+            });
+          });
+        } else {
+          const recoveryFrac = 1 / (1 + Math.exp(-(state.smpTemp - 42) / 3.2));
+          const kappa = (1.0 - recoveryFrac) * 0.45;
+          for (let i = 0; i < 8; i++) {
+            const x0 = -1.8 + i * 0.45, x1 = x0 + 0.45;
+            const y0 = 0.5 * kappa * Math.pow(x0 + 1.8, 2) - 0.6;
+            const y1 = 0.5 * kappa * Math.pow(x1 + 1.8, 2) - 0.6;
+            const pts = [[x0,y0,0],[x1,y1,0],[x1,y1+0.5,0],[x0,y0+0.5,0]].map(p => project3Dto2D(p, width, height));
+            ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath();
+            ctx.fillStyle = getJetColor((1.0 - recoveryFrac) * (1.0 - i / 8), 0.85);
+            if (state.renderMode !== 'wireframe') ctx.fill();
+            ctx.strokeStyle = wireColor; ctx.lineWidth = state.wireWidth; ctx.stroke();
+          }
+        }
+      }
+
+      let lastTime = performance.now();
+      function animate(now) {
+        const dt = Math.min(0.1, (now - lastTime) / 1000);
+        lastTime = now;
+        for (let p in state.velocities) {
+          if (state.velocities[p] !== 0) {
+            state.angles[p] = (state.angles[p] + state.velocities[p] * state.playbackSpeed) % (Math.PI * 2);
+            const deg = (state.angles[p] * 180 / Math.PI) % 360;
+            document.getElementById(`deg-val-${p}`).textContent = deg.toFixed(1) + "°";
+            document.getElementById(`slider-${p}`).value = deg;
+          }
+        }
+        if (state.isPlaying) {
+          state.timelineProgress = (state.timelineProgress + 0.08 * dt * state.playbackSpeed) % 1.0;
+          timelineSlider.value = state.timelineProgress * 100;
+          updateTimelineDisplay();
+        }
+        renderScene();
+        requestAnimationFrame(animate);
+      }
+
+      updateTimelineDisplay();
+      updateSMPStats();
+      requestAnimationFrame(animate);
+    </script>
+  </body>
+</html>
